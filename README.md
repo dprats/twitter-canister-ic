@@ -7,6 +7,7 @@ The intent of this repo is to show simple components for building a backend API 
 There are two ways to interact with this backend canister:
 
 a. Sending it messages via the DFX commandline
+
 b. Attaching a web app which sends the backend canister messages using JavaScript
 
 # Methods the Backend has
