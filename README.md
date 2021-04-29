@@ -1,20 +1,24 @@
 # twitter_clone
 
-Welcome to your new twitter_clone project and to the internet computer development community. By default, creating a new project adds this README and some template files to your project directory. You can edit these template files to customize your project and to include your own code to speed up the development cycle.
+This is a simple CRUD web app inspired by Twitter.
 
-To get started, you might want to explore the project directory structure and the default configuration file. Working with this project in your development environment will not affect any production deployment or identity tokens.
+The intent of this repo is to show simple components for building a backend API that you cna use to get started with the IC.
 
-To learn more before you start working with twitter_clone, see the following documentation available online:
+# Methods the Backend has
 
-- [Quick Start](https://sdk.dfinity.org/docs/quickstart/quickstart-intro.html)
-- [SDK Developer Tools](https://sdk.dfinity.org/docs/developers-guide/sdk-guide.html)
-- [Motoko Programming Language Guide](https://sdk.dfinity.org/docs/language-guide/motoko.html)
-- [Motoko Language Quick Reference](https://sdk.dfinity.org/docs/language-guide/language-manual.html)
+## Get the tweets (akin to GET /tweets/)
+//Shows all of the logged in user's most recent tweets
+public query func get_tweets() : async Text { }; 
 
-If you want to start working on your project right away, you might want to try the following commands:
+## Post a tweet (akin to POST /tweets/ )
+//Creates a new post as the logged in user
+public func create_tweets(tweet: Text)  : async Text { }
 
-```bash
-cd twitter_clone/
-dfx help
-dfx config --help
-```
+## Get the feed of tweets (akin to GET /tweets/feed )
+//Shows the most recent tweets by user's the logged in user is following
+
+## Get the tweets of a user (akin to GET /tweets/:userId)
+//see tweets by a particular user
+
+## Follow a user
+//Allows the authenticated user to follow another user on the platform
