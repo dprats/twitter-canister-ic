@@ -66,6 +66,11 @@ actor {
         type Tweet = {
             copy : Text;
         }; 
+        //This is worth breaking down...Array
+        // a. H is the library imported in line 4
+        // b. H.HashMap is the library method to create a new hashmap: https://sdk.dfinity.org/docs/base-libraries/hashmap
+        // c. H.HashMap< A, B> needs the type of the key and the type of the value
+        // d. We want a MUTABLE list to store the growing list of Tweets. There are many ways to do this but we use a Buffer below
         let tweets_store = H.HashMap<Text, Buffer.Buffer<Tweet>>(0, Text.equal, Text.hash);
 
         //2.3.1 Seed initial data
