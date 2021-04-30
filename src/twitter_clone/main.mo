@@ -2,6 +2,10 @@
 import Array "mo:base/Array";
 import Nat "mo:base/Nat";
 import H "mo:base/HashMap";
+import Buffer "mo:base/Buffer";
+import Text "mo:base/Text";
+import P "mo:base/Principal";
+
 
 actor {
 
@@ -12,127 +16,135 @@ actor {
     //1.1 The User type
     type User = {
         username: Text;
-        followers: [User];  //array of users
-        tweets: [Tweet]; //array of tweets
+        followers: [Text];  //array of usernames
     }; 
     
      //1.2 The Tweet Type
-    type Tweet = {
-        user : User; //User type defined in 1.1
-        copy : Text;
-    }; 
+  
 
 
     //2. THE STATE
     //This is where we store the users and the tweets.
-    // We will use a simple key value store where... 
-    // a. Key: is a Principal.  
-    // b. Value: the User record type defined in 1.1
+    // We will use two simple key value stores:
+    // 1. Key Value store mapping principals to usernames
+    // 2. Key value store mapping usernames to arrays of tweetss
 
 
-    //To construct this key-value store, we need to understand two:
+    //To construct this key-value store, we need to understand two concepts:
     
-    // a. Principal: This is a primitive we will use to identiy users. The principal associated with a call is a value that identifies a unique user".
-    //         You can fead more here: https://sdk.dfinity.org/docs/language-guide/caller-id.html
+    // a. Principal: This is an IC primitive we will use to identiy users. 
+    //    The principal associated with a call is a value that identifies a unique user".
+    //     You can fead more here: https://sdk.dfinity.org/docs/language-guide/caller-id.html
     
-    // b. HashMap: There are many ways to build a key-value store, and we will use the HashMap for 
+    // b. HashMap: There are many ways to build a key-value store, and we will use the HashMap data structure for 
     //         this example. You can read more here: https://sdk.dfinity.org/docs/base-libraries/hashmap
 
-        // 2.1 The users of the platform
-        var user1: Text = "Diego";
 
-        var user2 : User = {
-            username = "dprats";
-            followers = [];
-            tweets = [Tweet];
+        //2.1 Username Data Store
+        // Key value store where Principal is the key, username is the value
+        // {
+        //  ....
+        //   "username1": [Tweet1, Twee2, etc...],
+        //   "username2": [Tweet3, Twee4, etc...],
+        //   ...
+        //  }
+        let username_store = H.HashMap<Principal, Text>(0, P.equal, P.hash);
+        //2.2.1 seed the user store with initial data
+        let userPrincipal1: Principal = P.fromText("q6j5j-trrwk-h7td3-ktkjf-qcgim-n3pmz-jwycu-nhpau-6v66n-ctjzg-4qe");
+        let username1 = "dprats";
+        username_store.put(userPrincipal1, username1);
+
+        //2.1 s
+       
+        //2.2 Key value store where username is the key, array of tweets is the value
+        // {
+        //  ....
+        //   "username1": [Tweet1, Twee2, etc...],
+        //   "username2": [Tweet3, Twee4, etc...],
+        //   ...
+        //  }
+        type Tweet = {
+            copy : Text;
+        }; 
+        let tweets_store = H.HashMap<Text, Buffer.Buffer<Tweet>>(0, Text.equal, Text.hash);
+
+        //2.3.1 Seed initial data
+
+        //seed the buffer of tweets
+        let tweet1: Tweet = {
+            copy = "this is my first tweet";
         };
-
-         var user3 : User = {
-            username = "yanChen";
-            followers = [user2];
+        let tweet2: Tweet = {
+            copy = "this is my second weet";
         };
+        let tweet_buffer = Buffer.Buffer<Tweet>(1); //
+        tweet_buffer.add(tweet1);
+        tweet_buffer.add(tweet2);
 
-    
-        let tweets : [Tweet] = [
-            {"Diego", "First"},
-            {"Diego", "Second"},
-            {"Jordi", "Hola!"},
-        ];
-
-        //SCRATCHPAD
-
-        //key value store
-        let store: HashMap<Text, Text> = {
-            "Dprats": "Diego"
-        };
-
-        let store = H.HashMap<Text, Buffer<Text>>(0, Text.equal, Text.hash);
-
-
-
-        let buffer1 = Buffer(0);
-        buffer1.put("First");
-        buffer1.put("second");
-
-
-        store.put("dprats", buffer1);
-        store.get("dprats"); // ["First", "Second"]);
-        buffer1.put("third");
-        store.get("dprats"); // ["First", "Second", "third"]);
-
-        let  = H.HashMap<Principal, User>;
-
-
-        "fd[pdmdpindobd33": {
-            user: user1
-        }
-        
+        //add the buffer of tweets to the data store (with right username as key)
+        tweets_store.put(username1, tweet_buffer);
 
 
     //3. PUBLIC METHODS
     //Public Methods (akin to "API endpoints") this backend canister will expose to the world.
 
-        //3.0 "What is my name?" method returns the user info
-        public query func read() : async Text {
-            return user1;
-        }; 
-
         //3.1 Get the tweets (akin to GET /tweets/)
         //Shows all of the logged in user's most recent tweets
-        public query func get_tweets() : async [Tweet] {
-            return tweets;
+        public shared(msg) func get_tweets() : async [Tweet] {
+            
+            // 3.1.1 get the caller's principal 
+            let user_principal = msg.caller; 
+
+            //3.1.2 using the principal, find the user's username
+            let username = username_store.get(user_principal);
+
+            //3.1.2 using username, return array of tweets
+            let tweet_buffer = tweets_store.get(username);
+            
+            return tweet_buffer.toArray();
         }; 
 
         //3.2 Post a tweet (akin to POST /tweets/ )
         //Creates a new post as the logged in user
-        public func create_tweet(post: Tweet)  : async Bool {
-            return true;
-        }
+        public shared(msg) func create_tweet(post: Tweet)  : async Bool {
+           
+            // 3.2.1 get the caller's principal 
+            let user_principal = msg.caller; 
 
-        //3.3 Get the feed of tweets (akin to GET /tweets/feed )
+            //3.2.2 using the principal, find the user's username
+            let username = username_store.get(user_principal);
+
+            //3.2.3 using the username, add this tweet to the mutable buffer of tweets
+            let tweet_buffer = tweets_store.get(username);
+            let tweet: Tweet = {
+                copy = post;
+            };
+            tweet_buffer.put(tweet);
+
+            return true;
+        };
+
+        //3.3 Get the feed of twazeets (akin to GET /tweets/feed )
         //for a logged in user, construct a feed of all tweets they should see
-        public query shared(msg) func get_feed() : async [Tweet]{
+        public shared(msg) func get_feed() : async [Tweet] {
             let user = msg.caller; // this is a principal ID
-        }
+            return tweets;
+
+        };
 
         //3.4 Get the tweets of a user (akin to GET /tweets/:userId)
         //see tweets by a particular user
         public func get_tweet(userid: Text) : async [Tweet] {
-            []
-        }
+            return [];
+        };
+
         //3.5 Follow a user
         //Allows the authenticated user to follow another user on the platform
-        public follow_user(userId: Text) : async Bool {
-            return true;
-        }
+        // public follow_user(userId: Text) : async Bool {
+        //     return true;
+        // };
 
     //4. Utility or "helper" methods that the canister uses in its function. 
-    //These are all private and not visible to the world.
-
-    //hello world 
-    public func greet(name : Text) : async Text {
-        return "Hello, " # name # "!";
-    };
-
+    //These are all private and not visible to the world.s
 
 };
