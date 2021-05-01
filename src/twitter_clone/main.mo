@@ -69,7 +69,7 @@ actor {
             copy : Text;
         }; 
 
-        // Line 77 is worth breaking down... we got a lot here....
+        // Line 77 is worth breaking down... we got a lot going here....
         // a. H is the library imported in line 4
         // b. H.HashMap() is the library method to create a new hashmap: https://sdk.dfinity.org/docs/base-libraries/hashmap
         // c. H.HashMap< A, B> needs the type of the key and the type of the value
@@ -105,10 +105,30 @@ actor {
             let user_principal = msg.caller; 
 
             //3.1.2 using the principal, find the user's username
-            let username = username_store.get(user_principal);
+            // Note: the principal MAY not be in the store, .get()
+            // may return nothing. In some languages, .get() would return NULL or NIL or FALSE.
+            // Motoko (as Swift, Rust, Scala, etc...) returns an Optional type. 
+            // "?Text" means "username" is an optional which MAY be a Text or nothing.
+            // you use the option type with pattern matching to tell the program what to 
+            //do in case the .get() finds nothing.
+            // See pattern matching for more details: https://sdk.dfinity.org/docs/language-guide/pattern-matching.html
+            let username : Text = switch(username_store.get(user_principal)){
+                case null {
+                    return []; //in case of nothing, return an empty list
+                };
+                case (?text) text; 
+            };
 
-            //3.1.2 using username, return array of tweets
-            let tweet_buffer = tweets_store.get(username);
+            //3.1.3 using username, return array of tweets
+            // This has same pattern as 3.1.2, we have to use pattern matching to tell the program
+            // what to do in the case of both options (it wont compile otherwise!)
+            let tweet_buffer : [Tweet] = switch(tweets_store.get(username)) {
+                case null {
+                    return []; //in case of of nothing, return empty "array". This should not happen if data is consistent across stores
+                };
+                case (?Buffer) Buffer<Tweet>;
+            };
+
             
             return tweet_buffer.toArray();
         }; 
