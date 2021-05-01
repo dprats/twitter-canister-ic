@@ -124,13 +124,13 @@ actor {
             // what to do in the case of both options (it wont compile otherwise!)
             let tweet_buffer : [Tweet] = switch(tweets_store.get(username)) {
                 case null {
-                    return []; //in case of of nothing, return empty "array". This should not happen if data is consistent across stores
+                    return []; //in case of of nothing, return empty "array". This should not happen if we handle data consistently across stores
                 };
-                case (?Buffer) Buffer<Tweet>;
-            };
+                case (?buf) buf.toArray();
+            };  
 
             
-            return tweet_buffer.toArray();
+            return tweet_buffer;
         }; 
 
         //3.2 Post a tweet (akin to POST /tweets/ )
