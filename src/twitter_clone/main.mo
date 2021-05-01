@@ -32,13 +32,15 @@ actor {
 
     //To construct this key-value store, we need to understand two concepts:
     
-    // a. Principal: This is an IC primitive we will use to identiy users. 
+    // a. Principal: This is an Internet Computer primitive we will use to identiy users. 
     //    The principal associated with a call is a value that identifies a unique user".
-    //     You can fead more here: https://sdk.dfinity.org/docs/language-guide/caller-id.html
+    //    You can read more here: https://sdk.dfinity.org/docs/language-guide/caller-id.html
+    //    This is not Motoko-specific. Any language (e.g. Rust) which can deploy to IC has this type.
+    //    Example of a Principal: "q6j5j-trrwk-h7td3-ktkjf-qcgim-n3pmz-jwycu-nhpau-6v66n-ctjzg-4qe"
     
-    // b. HashMap: There are many ways to build a key-value store, and we will use the HashMap data structure for 
-    //         this example. You can read more here: https://sdk.dfinity.org/docs/base-libraries/hashmap
-
+    // b. HashMap: This is a Motoko-specific data structure. There are many ways to build a key-value store in the IC, 
+    //    but these do depend on the Language you are using. For Motoko, there are a few options.
+    //    For this tutorial, will use the HashMap data structure. You can read more here: https://sdk.dfinity.org/docs/base-libraries/hashmap
 
         //2.1 Username Data Store
         // Key value store where Principal is the key, username is the value
@@ -66,11 +68,13 @@ actor {
         type Tweet = {
             copy : Text;
         }; 
-        //This is worth breaking down...Array
+
+        // Line 77 is worth breaking down... we got a lot here....
         // a. H is the library imported in line 4
-        // b. H.HashMap is the library method to create a new hashmap: https://sdk.dfinity.org/docs/base-libraries/hashmap
+        // b. H.HashMap() is the library method to create a new hashmap: https://sdk.dfinity.org/docs/base-libraries/hashmap
         // c. H.HashMap< A, B> needs the type of the key and the type of the value
-        // d. We want a MUTABLE list to store the growing list of Tweets. There are many ways to do this but we use a Buffer below
+        // d. We want a MUTABLE list to store the growing list of Tweets. There are many ways to do this but we use a Buffer below.
+        // e. If your first instinct was to use an Array for a growing list, note that Arrays are fixed-length lists in Motoko.
         let tweets_store = H.HashMap<Text, Buffer.Buffer<Tweet>>(0, Text.equal, Text.hash);
 
         //2.3.1 Seed initial data
@@ -80,7 +84,7 @@ actor {
             copy = "this is my first tweet";
         };
         let tweet2: Tweet = {
-            copy = "this is my second weet";
+            copy = "this is my second tweet";
         };
         let tweet_buffer = Buffer.Buffer<Tweet>(1); //
         tweet_buffer.add(tweet1);
