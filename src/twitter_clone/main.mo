@@ -122,7 +122,7 @@ actor {
             //3.1.3 using username, return array of tweets
             // This has same pattern as 3.1.2, we have to use pattern matching to tell the program
             // what to do in the case of both options (it wont compile otherwise!)
-            let tweet_buffer : [Tweet] = switch(tweets_store.get(username)) {
+            let tweet_array : [Tweet] = switch(tweets_store.get(username)) {
                 case null {
                     return []; //in case of of nothing, return empty "array". This should not happen if we handle data consistently across stores
                 };
@@ -130,25 +130,38 @@ actor {
             };  
 
             
-            return tweet_buffer;
+            return tweet_array;
         }; 
 
-        //3.2 Post a tweet (akin to POST /tweets/ )
+        //3.2 Post a tweet (akin to POST /tweets/ )s
         //Creates a new post as the logged in user
-        public shared(msg) func create_tweet(post: Tweet)  : async Bool {
+        public shared(msg) func create_tweet(post: Text)  : async Bool {
            
             // 3.2.1 get the caller's principal 
             let user_principal = msg.caller; 
 
             //3.2.2 using the principal, find the user's username
-            let username = username_store.get(user_principal);
+            let username : Text = switch(username_store.get(user_principal)){
+                case null {
+                    return false; //in case of nothing, return false
+                };
+                case (?text) text; 
+            };
 
             //3.2.3 using the username, add this tweet to the mutable buffer of tweets
-            let tweet_buffer = tweets_store.get(username);
-            let tweet: Tweet = {
-                copy = post;
-            };
-            tweet_buffer.put(tweet);
+            switch(tweets_store.get(username)) {
+                case null {
+                    ////in case of of no username match, return false
+                    return false; 
+                };
+                case (?buf) { 
+                    // in case the username does match, add the new tweet to the buffer
+                    let new_tweet: Tweet = {
+                        copy = post;
+                    };
+                    buf.add(new_tweet);
+                };
+            };  
 
             return true;
         };
@@ -157,7 +170,7 @@ actor {
         //for a logged in user, construct a feed of all tweets they should see
         public shared(msg) func get_feed() : async [Tweet] {
             let user = msg.caller; // this is a principal ID
-            return tweets;
+            return [];
 
         };
 
