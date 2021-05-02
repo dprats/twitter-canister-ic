@@ -1,4 +1,4 @@
-# twitter_clone
+# Building a simple backend canister Tutorial
 
 This is a simple CRUD web app inspired by Twitter.
 
