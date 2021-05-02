@@ -2,13 +2,26 @@
 
 This is a simple CRUD web app inspired by Twitter.
 
-The intent of this repo is to show simple components for building a backend API that you can use to get started with the IC.
+The intent of this repo is to show simple components for building a backend API that you can use to get started with the Internet Computer.
 
 There are two ways to interact with this backend canister:
 
 a. Sending it messages via the DFX command line tool
 
 b. Attaching a web app which sends the backend canister messages using JavaScript
+
+# The goal and intent
+
+The goal and intent of this app is to take someone who has never deployed to the Internet Computer or used Motoko and walk through the basics. It is deliberately simplistic and tries to explain many steps which more experienced engineers may find verbose.
+
+## Things you will learn with this:
+- Basics of Motoko
+- How to make a Key Value Store
+- How to call your backend via DFX
+
+## Main resources you will need
+
+https://sdk.dfinity.org/docs/language-guide/
 
 # Methods the Backend has
 
