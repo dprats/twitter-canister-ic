@@ -7,7 +7,7 @@ import Text "mo:base/Text";
 import P "mo:base/Principal";
 
 
-actor {
+actor TwitterClone {
 
     //1. TYPES
     //Declare the types we willl use for this simple twitter clone. This akin to the data schema
@@ -38,7 +38,7 @@ actor {
     //    This is not Motoko-specific. Any language (e.g. Rust) which can deploy to IC has this type.
     //    Example of a Principal: "q6j5j-trrwk-h7td3-ktkjf-qcgim-n3pmz-jwycu-nhpau-6v66n-ctjzg-4qe"
     
-    // b. HashMap: This is a Motoko-specific data structure. There are many ways to build a key-value store in the IC, 
+    // b. HashMap: HashMap is a common data structure, we will use the Motoko-specific implementation There are many ways to build a key-value store in the IC, 
     //    but these do depend on the Language you are using. For Motoko, there are a few options.
     //    For this tutorial, will use the HashMap data structure. You can read more here: https://sdk.dfinity.org/docs/base-libraries/hashmap
 
@@ -46,8 +46,8 @@ actor {
         // Key value store where Principal is the key, username is the value
         // {
         //  ....
-        //   "username1": [Tweet1, Twee2, etc...],
-        //   "username2": [Tweet3, Twee4, etc...],
+        //   ""q6j5j-trrwk-h7td3-ktkjf-qcgim-n3pmz-jwycu-nhpau-6v66n-ctjzg-4qe": "dprats",
+        //   ""df45j-tfg3g-f7dgt-cghj-35hvc-nofpma-2dfcz-nfzc1u-d61zax-dtfg-dr3": [Tweet3, Twee4, etc...],
         //   ...
         //  }
         let username_store = H.HashMap<Principal, Text>(0, P.equal, P.hash);
@@ -99,7 +99,9 @@ actor {
 
         //3.1 Get the tweets (akin to GET /tweets/)
         //Shows all of the logged in user's most recent tweets
-        public shared(msg) func get_tweets() : async [Tweet] {
+        // To call this method from DFX (after you deploy locally, of course), use the following command:
+        // dfx canister call twitter_clone get_tweets
+        public shared(msg) func get_tweets() : async [Text] {
             
             // 3.1.1 get the caller's principal 
             let user_principal = msg.caller; 
@@ -130,7 +132,8 @@ actor {
             };  
 
             
-            return tweet_array;
+            // return tweet_array;
+            return ["first", "second"];
         }; 
 
         //3.2 Post a tweet (akin to POST /tweets/ )s
@@ -166,7 +169,7 @@ actor {
             return true;
         };
 
-        //3.3 Get the feed of twazeets (akin to GET /tweets/feed )
+        //3.3 Get the feed of tweets (akin to GET /tweets/feed )
         //for a logged in user, construct a feed of all tweets they should see
         public shared(msg) func get_feed() : async [Tweet] {
             let user = msg.caller; // this is a principal ID
