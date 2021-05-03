@@ -15,7 +15,7 @@ b. Attaching a web app which sends the backend canister messages using JavaScrip
 The goal and intent of this app is to take someone who has never deployed to the Internet Computer or used Motoko and walk through the basics. It is deliberately simplistic and tries to explain many steps which more experienced engineers may find verbose.
 
 ## Things you will learn in this tutorial:
-- Basics of Motoko
+- Motoko basics
 - How to make a Key Value Store
 - How to call your backend via DFX
 
