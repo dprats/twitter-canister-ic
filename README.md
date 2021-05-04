@@ -22,8 +22,8 @@ The goal and intent of this app is to take someone who has never deployed to the
 
 ## Main resources you will need
 
-- https://sdk.dfinity.org/docs/quickstart/quickstart-intro.html[Canister SDK] 
-- https://sdk.dfinity.org/docs/language-guide/[Motoko Language guide]
+- [Canister SDK](https://sdk.dfinity.org/docs/quickstart/quickstart-intro.html)
+- [Motoko Language guide](https://sdk.dfinity.org/docs/language-guide/)
 
 
 ## Methods the Backend has
