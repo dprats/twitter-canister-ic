@@ -25,25 +25,21 @@ https://sdk.dfinity.org/docs/language-guide/
 
 # Methods the Backend has
 
-## 1. Get the tweets (akin to GET /tweets/ )
-- Shows all of the logged in user's most recent tweets
+## Get the tweets (akin to GET /tweets/ )
+- `public query func get_tweets() : async [Tweet] {}` shows all of the logged in user's most recent tweets
 
-`public query func get_tweets() : async [Tweet] {}`
 
-## 2. Post a tweet (akin to POST /tweets/ )
-- Creates a new post as the logged in user
+## Post a tweet (akin to POST /tweets/ )
+- `public func create_tweet(post: Tweet)  : async Bool { }` creates a new post as the logged in user
 
-`public func create_tweet(post: Tweet)  : async Bool { }`
 
-## 3. Get the feed of tweets (akin to GET /tweets/feed )
-- Shows the most recent tweets by user's the logged in user is following
+## Get the feed of tweets (akin to GET /tweets/feed )
+- `public query shared(msg) func get_feed() : async [Tweet]{}s` shows the most recent tweets by user's the logged in user is following
 
-`public query shared(msg) func get_feed() : async [Tweet]{}s`
 
-## 4. Get the tweets of a user (akin to GET /tweets/:userId )
-- see tweets by a particular user
-`public func get_tweet(userid: Text) : async [Tweet] {}`
+## Get the tweets of a user (akin to GET /tweets/:userId )
+- `public func get_tweet(userid: Text) : async [Tweet] {}` see tweets by a particular user
 
-## 5. Follow a user
-- Allows the authenticated user to follow another user on the platform
-`public follow_user(userId: Text) : async Bool`
+
+## Follow a user
+- `public follow_user(userId: Text) : async Bool` allows the authenticated user to follow another user on the platform
