@@ -21,7 +21,7 @@ The goal and intent of this app is to take someone who has never deployed to the
 
 ## Main resources you will need
 
-https://sdk.dfinity.org/docs/language-guide/
+https://sdk.dfinity.org/docs/language-guide/about-this-guide.html
 
 # Methods the Backend has
 
