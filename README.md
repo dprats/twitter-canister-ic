@@ -25,7 +25,6 @@ The goal and intent of this app is to take someone who has never deployed to the
 - [Canister SDK](https://sdk.dfinity.org/docs/quickstart/quickstart-intro.html)
 - [Motoko Language guide](https://sdk.dfinity.org/docs/language-guide/)
 
-
 ## Methods the Backend has
 
 ### 1. Get the tweets (akin to GET /tweets/ )
